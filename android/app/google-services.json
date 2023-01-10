@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1088370100549",
+    "project_id": "firestore-playground-2522b",
+    "storage_bucket": "firestore-playground-2522b.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1088370100549:android:118d1f215b81be76e3962c",
+        "android_client_info": {
+          "package_name": "com.example.firestore_playground"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1088370100549-peaooiquf4cpn7bnea3vsmb2jdv33gkv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCNqX53OHTp4XbBk7hMIqIGYSsTwHjwFj0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1088370100549-peaooiquf4cpn7bnea3vsmb2jdv33gkv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
