@@ -11,21 +11,11 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
       ),
       home: MyHomePage(),
@@ -47,6 +37,61 @@ class _MyHomePageState extends State<MyHomePage> {
   // await _products.add({"name": name, "price": price});
   // await _products.update({"name": name, "price": price});
   // await _products.doc(productId).delete();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _priceController = TextEditingController();
+
+  Future<void> _update([DocumentSnapshot? documentSnapshot]) async {
+    if (documentSnapshot != null) {
+      _nameController.text = documentSnapshot['name'];
+      _priceController.text = documentSnapshot['price'].toString();
+    }
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+              top: 20.00,
+              left: 20.00,
+              right: 20.00,
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: "Name"),
+              ),
+              TextField(
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: "Price"),
+              ),
+              const SizedBox(
+                height: 20.00,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final String name = _nameController.text;
+                  final dynamic price = _priceController.text;
+                  if (price != null) {
+                    await _products.doc(documentSnapshot!.id).update({
+                      "name": name,
+                      "price": price,
+                    });
+                    _nameController.text = "";
+                    _priceController.text = "";
+                  }
+                },
+                child: const Text("Update"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +114,18 @@ class _MyHomePageState extends State<MyHomePage> {
                       title: Text(documentSnapshot['name']),
                       subtitle: Text(
                         documentSnapshot['price'].toString(),
+                      ),
+                      trailing: SizedBox(
+                        width: 100,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            IconButton(
+                              onPressed: () => _update(documentSnapshot),
+                              icon: const Icon(Icons.edit),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   );
