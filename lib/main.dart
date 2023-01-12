@@ -74,7 +74,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ElevatedButton(
                 onPressed: () async {
                   final String name = _nameController.text;
-                  final dynamic price = _priceController.text;
+                  final double? price = double.tryParse(_priceController.text);
                   if (price != null) {
                     await _products.doc(documentSnapshot!.id).update({
                       "name": name,
@@ -93,9 +93,73 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  Future<void> _create([DocumentSnapshot? documentSnapshot]) async {
+    print("create func tested");
+    if (documentSnapshot != null) {
+      _nameController.text = documentSnapshot['name'];
+      _priceController.text = documentSnapshot['price'].toString();
+    }
+    await showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Padding(
+          padding: EdgeInsets.only(
+              top: 20.00,
+              left: 20.00,
+              right: 20.00,
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              TextField(
+                controller: _nameController,
+                decoration: const InputDecoration(labelText: "Name"),
+              ),
+              TextField(
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
+                controller: _priceController,
+                decoration: const InputDecoration(labelText: "Price"),
+              ),
+              const SizedBox(
+                height: 20.00,
+              ),
+              ElevatedButton(
+                onPressed: () async {
+                  final String name = _nameController.text;
+                  final double? price = double.tryParse(_priceController.text);
+                  if (price != null) {
+                    await _products.add({"name": name, "price": price});
+                    _nameController.text = "";
+                    _priceController.text = "";
+                  }
+                },
+                child: const Text("Update"),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _delete(String productId) async {
+    await _products.doc(productId).delete();
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text("You have successfully deleted a product"),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        onPressed: () => _create(),
+        child: const Icon(Icons.add_circle_outline),
+      ),
       appBar: AppBar(
         title: Text("FireStore Playground"),
       ),
@@ -123,6 +187,10 @@ class _MyHomePageState extends State<MyHomePage> {
                             IconButton(
                               onPressed: () => _update(documentSnapshot),
                               icon: const Icon(Icons.edit),
+                            ),
+                            IconButton(
+                              onPressed: () => _delete(documentSnapshot.id),
+                              icon: const Icon(Icons.delete_forever),
                             ),
                           ],
                         ),
